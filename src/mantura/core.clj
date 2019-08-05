@@ -115,6 +115,6 @@
   [parser]
   (fn [input]
     (let [seq (-many parser input)]
-      {:state :successful
+      {:state :success
        :content (map :content seq)
        :remaining (if seq (-> seq last :remaining) input)})))
