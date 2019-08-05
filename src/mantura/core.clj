@@ -1,23 +1,34 @@
 (ns mantura.core)
 
-(defn run [parser input]
+(defn run
+  "Run a parser on a `seq`able input"
+  [parser input]
   (parser (seq input)))
 
-(defn success [content]
+(defn success
+  "Return a parser that always succeeds with its argument as content"
+  [content]
   (fn [input]
     {:state :success :content content :remaining input}))
 
-(defn fail [& rest]
+(defn fail
+  "Return a parser that always fails"
+  [& rest]
   (fn [_]
     {:state :failure}))
 
-(defn success? [parsed]
+(defn success?
+  "Return true if the parsed result succeeded"
+  [parsed]
   (-> parsed :state (= :success)))
 
-(defn fail? [parsed]
+(defn fail?
+  "Return true if the parsed result failed"
+  [parsed]
   (-> parsed :state (= :failure)))
 
 (defmacro ^:private with-parser
+  "Helper macro, run body if parser succeeds"
   [parser input binding-map & body]
   `(let [parser# (run ~parser ~input)]
      (if (fail? parser#)
@@ -32,6 +43,9 @@
       ((f content) remaining))))
 
 (defn bind
+  "Monadic bind, apply a function on the content of a succeeding parser
+  Otherwise do nothing
+  The function must take an argument with the type of the content of the parser and return a new parser"
   ([]
    (fn [_] {:state :failure}))
   ([parser & fs]
@@ -42,12 +56,15 @@
   (bind parser #(-> % f success)))
 
 (defn lift
+  "Functor lift, simply apply a function on the content of a succeeding parser
+  Otherwise do nothing"
   ([]
    (fn [_] {:state :failure}))
   ([parser & fs]
    (reduce -lift parser fs)))
 
 (defn choice
+  "Return the first succeeding parser in the list or fails"
   ([]
    (fn [_] {:state :failure}))
   ([parser & rest]
@@ -55,9 +72,10 @@
      (let [{state :state :as -p} (parser input)]
        (if (= :success state)
          -p
-         ((apply or rest) input))))))
+         ((apply choice rest) input))))))
 
 (defn token
+  "Return a parser that simply checks for equality with the first element of input"
   [tok]
   (fn [input]
     (if (= tok (first input))
@@ -70,7 +88,9 @@
     (with-parser parser input {remaining :remaining :as parsed}
       (cons parsed (-sequence rest remaining)))))
 
-(defn sequence [& parsers]
+(defn sequence
+  "Apply the parsers in order"
+  [& parsers]
   (fn [input]
     (let [seq (-sequence parsers input)]
       (if (fail? seq)
@@ -85,7 +105,9 @@
       nil
       (cons parsed (-many parser remaining)))))
 
-(defn many [parser]
+(defn many
+  "Apply a parser until it fails"
+  [parser]
   (fn [input]
     (let [seq (-many parser input)]
       {:state :successful
