@@ -99,6 +99,11 @@
          :content (map :content seq)
          :remaining (-> seq last :remaining)}))))
 
+(defn tokens
+  "Return a parser that checks if the input starts with all the parameters"
+  [toks]
+  (apply sequence (map token (seq toks))))
+
 (defn ^:private -many [parser input]
   (let [{remaining :remaining :as parsed} (parser input)]
     (if (fail? parsed)
