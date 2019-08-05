@@ -81,4 +81,3 @@
             (run "")
             (= {:state :success :content () :remaining ()})))
     ))
-(empty? nil)
