@@ -1,5 +1,7 @@
 (ns mantura.core)
 
+(defn ^:private seq [sequence] (or (clojure.core/seq sequence) ()))
+
 (defn run
   "Run a parser on a `seq`able input"
   [parser input]
@@ -84,7 +86,7 @@
 
 (defn ^:private -sequence [[parser & rest :as parsers] input]
   (if (empty? parsers)
-    nil
+    ()
     (with-parser parser input {remaining :remaining :as parsed}
       (cons parsed (-sequence rest remaining)))))
 
@@ -97,7 +99,7 @@
         seq
         {:state :success
          :content (map :content seq)
-         :remaining (if seq (-> seq last :remaining) input)}))))
+         :remaining (if (not-empty seq) (-> seq last :remaining) input)}))))
 
 (defn tokens
   "Return a parser that checks if the input starts with all the parameters"
@@ -107,7 +109,7 @@
 (defn ^:private -many [parser input]
   (let [{remaining :remaining :as parsed} (parser input)]
     (if (fail? parsed)
-      nil
+      ()
       (cons parsed (-many parser remaining)))))
 
 (defn many
@@ -117,4 +119,4 @@
     (let [seq (-many parser input)]
       {:state :success
        :content (map :content seq)
-       :remaining (if seq (-> seq last :remaining) input)})))
+       :remaining (if (not-empty seq) (-> seq last :remaining) input)})))
