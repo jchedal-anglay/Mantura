@@ -4,7 +4,7 @@
 
 (deftest test-success
   (testing "success"
-    (is (-> 0 success (run "") (= {:state :success :content 0 :remaining nil})))))
+    (is (-> 0 success (run "") (= {:state :success :content 0 :remaining ()})))))
 
 (deftest test-fail
   (testing "fail"
@@ -62,3 +62,23 @@
     (is (-> (tokens "abc")
             (run "foo")
             (= {:state :failure})))))
+
+(deftest test-many
+  (testing "many"
+    (is (-> \a
+            token
+            many
+            (run "aaaaab")
+            (= {:state :success :content (seq "aaaaa") :remaining '(\b)})))
+    (is (-> \a
+            token
+            many
+            (run "aaa")
+            (= {:state :success :content (seq "aaa") :remaining ()})))
+    (is (-> \a
+            token
+            many
+            (run "")
+            (= {:state :success :content () :remaining ()})))
+    ))
+(empty? nil)
