@@ -3,14 +3,6 @@
 (defn run [parser input]
   (parser (seq input)))
 
-(defmacro ^:private with-parser
-  [parser input binding-map & body]
-  `(let [parser# (run ~parser ~input)]
-     (if (-> parser# :state (= :failure))
-       parser#
-       (let [~binding-map parser#]
-         ~@body))))
-
 (defn success [content]
   (fn [input]
     {:state :success :content content :remaining input}))
@@ -19,12 +11,25 @@
   (fn [_]
     {:state :failure}))
 
+(defn success? [parsed]
+  (-> parsed :state (= :success)))
+
+(defn fail? [parsed]
+  (-> parsed :state (= :failure)))
+
+(defmacro ^:private with-parser
+  [parser input binding-map & body]
+  `(let [parser# (run ~parser ~input)]
+     (if (fail? parser#)
+       parser#
+       (let [~binding-map parser#]
+         ~@body))))
+
 (defn ^:private -bind
   [parser f]
   (fn [input]
     (with-parser parser input {content :content remaining :remaining}
-      (with-parser (f content) remaining {content- :content remaining- :remaining}
-        {:state :success :content content- :remaining remaining-}))))
+      ((f content) remaining))))
 
 (defn bind
   ([]
@@ -42,15 +47,15 @@
   ([parser & fs]
    (reduce -lift parser fs)))
 
-(defn or
+(defn choice
   ([]
    (fn [_] {:state :failure}))
   ([parser & rest]
    (fn [input]
-     (let [{state :state :as -p} (run parser input)]
+     (let [{state :state :as -p} (parser input)]
        (if (= :success state)
          -p
-         (run (apply or rest) input))))))
+         ((apply or rest) input))))))
 
 (defn token
   [tok]
@@ -58,3 +63,31 @@
     (if (= tok (first input))
       {:state :success :content tok :remaining (rest input)}
       {:state :failure})))
+
+(defn -sequence [[parser & rest :as parsers] input]
+  (if (empty? parsers)
+    nil
+    (with-parser parser input {remaining :remaining :as parsed}
+      (cons parsed (-sequence rest remaining)))))
+
+(defn sequence [& parsers]
+  (fn [input]
+    (let [seq (-sequence parsers input)]
+      (if (fail? seq)
+        seq
+        {:state :success
+         :content (map :content seq)
+         :remaining (-> seq last :remaining)}))))
+
+(defn -many [parser input]
+  (let [{remaining :remaining :as parsed} (parser input)]
+    (if (fail? parsed)
+      nil
+      (cons parsed (-many parser remaining)))))
+
+(defn many [parser]
+  (fn [input]
+    (let [seq (-many parser input)]
+      {:state :successful
+       :content (map :content seq)
+       :remaining (if seq (-> seq last :remaining) input)})))
