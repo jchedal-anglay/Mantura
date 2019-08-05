@@ -20,9 +20,45 @@
     (is (-> 48
             success
             (bind (fn [x] (fail (char x))))
-            (run "yeet")
+            (run "anything")
             (= {:state :failure})))
     (is (-> (fail)
             (bind (fn [x] (success (char x))))
-            (run "yeet")
+            (run "anything")
+            (= {:state :failure})))))
+
+(deftest test-lift
+  (testing "lift"
+    (is (-> 0
+            fail
+            (lift #(%))
+            (run "anything")
+            (= {:state :failure})))
+    (is (-> 0
+            success
+            (lift #(+ 2 %))
+            (run "anything")
+            (= (run (success 2) "anything"))))))
+
+(deftest test-token
+  (testing "token"
+    (is (-> \X
+            token
+            (run "Xshouldremain")
+            (= {:state :success :content \X :remaining (seq "shouldremain")})))
+    (is (-> \X
+            token
+            (run "Yinvalid")
+            (= {:state :failure})))))
+
+(deftest test-tokens
+  (testing "tokens"
+    (is (-> (tokens "foo")
+            (run "foobar")
+            (= {:state :success :content (seq "foo") :remaining (seq "bar")})))
+    (is (-> (tokens "")
+            (run "anything")
+            (= {:state :success :content () :remaining (seq "anything")})))
+    (is (-> (tokens "abc")
+            (run "foo")
             (= {:state :failure})))))
