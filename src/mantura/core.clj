@@ -97,7 +97,7 @@
         seq
         {:state :success
          :content (map :content seq)
-         :remaining (-> seq last :remaining)}))))
+         :remaining (if seq (-> seq last :remaining) input)}))))
 
 (defn tokens
   "Return a parser that checks if the input starts with all the parameters"
