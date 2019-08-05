@@ -82,7 +82,7 @@
       {:state :success :content tok :remaining (rest input)}
       {:state :failure})))
 
-(defn -sequence [[parser & rest :as parsers] input]
+(defn ^:private -sequence [[parser & rest :as parsers] input]
   (if (empty? parsers)
     nil
     (with-parser parser input {remaining :remaining :as parsed}
@@ -99,7 +99,7 @@
          :content (map :content seq)
          :remaining (-> seq last :remaining)}))))
 
-(defn -many [parser input]
+(defn ^:private -many [parser input]
   (let [{remaining :remaining :as parsed} (parser input)]
     (if (fail? parsed)
       nil
