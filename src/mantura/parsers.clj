@@ -77,3 +77,9 @@
   "Apply a parser until it fails"
   [parser]
   (fix (fn [self] (choice (lift2 cons parser (choice self (success ()))) (success ())))))
+
+(defn many1
+  "Apply a parser until it fails"
+  [parser]
+  (fix (fn [self] (lift2 cons parser (choice self (success ()))))))
+
