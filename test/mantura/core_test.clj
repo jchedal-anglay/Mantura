@@ -80,4 +80,8 @@
             many
             (run "")
             (= {:state :success :content () :remaining ()})))
-    ))
+    (is (-> \a
+            token
+            many
+            (run "bbbaa")
+            (= {:state :success :content () :remaining (seq "bbbaa")})))))
