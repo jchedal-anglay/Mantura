@@ -73,6 +73,6 @@
   (fix (fn [self] (choice (lift2 cons parser (choice self (success ()))) (success ())))))
 
 (defn many1
-  "Apply a parser until it fails"
+  "Apply a parser until it fails, fails if there is 0 elements"
   [parser]
   (fix (fn [self] (lift2 cons parser (choice self (success ()))))))
