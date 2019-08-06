@@ -87,16 +87,16 @@
 (defn ^:private -sequence [[parser & rest :as parsers] input]
   (if (empty? parsers)
     ()
-    (with-parser parser input {remaining :remaining :as parsed}
-      (cons parsed (-sequence rest remaining)))))
+    (let [{remaining :remaining :as parsed} (run parser input)]
+      (cons parsed (if (fail? parsed) () (-sequence rest remaining))))))
 
 (defn sequence
   "Apply the parsers in order"
   [& parsers]
   (fn [input]
     (let [seq (-sequence parsers input)]
-      (if (fail? seq)
-        seq
+      (if (some fail? seq)
+        {:state :failure}
         {:state :success
          :content (map :content seq)
          :remaining (if (not-empty seq) (-> seq last :remaining) input)}))))
