@@ -8,7 +8,7 @@
 
 (deftest test-fail
   (testing "fail"
-    (is (-> 0 fail (run "") (= {:state :failure})))))
+    (is (-> 0 fail (run "") fail?))))
 
 (deftest test-bind
   (testing "bind"
@@ -21,11 +21,11 @@
             success
             (bind (fn [x] (fail (char x))))
             (run "anything")
-            (= {:state :failure})))
+            fail?))
     (is (-> (fail)
             (bind (fn [x] (success (char x))))
             (run "anything")
-            (= {:state :failure})))))
+            fail?))))
 
 (deftest test-lift
   (testing "lift"
@@ -33,7 +33,7 @@
             fail
             (lift #(%))
             (run "anything")
-            (= {:state :failure})))
+            fail?))
     (is (-> 0
             success
             (lift #(+ 2 %))
@@ -49,7 +49,7 @@
     (is (-> \X
             token
             (run "Yinvalid")
-            (= {:state :failure})))))
+            fail?))))
 
 (deftest test-tokens
   (testing "tokens"
@@ -61,7 +61,7 @@
             (= {:state :success :content () :remaining (seq "anything")})))
     (is (-> (tokens "abc")
             (run "foo")
-            (= {:state :failure})))))
+            fail?))))
 
 (deftest test-many
   (testing "many"
@@ -102,12 +102,12 @@
             token
             many1
             (run "")
-            (= {:state :failure})))
+            fail?))
     (is (-> \a
             token
             many1
             (run "bbbaa")
-            (= {:state :failure})))))
+            fail?))))
 
 (deftest test-take
   (testing "take"
