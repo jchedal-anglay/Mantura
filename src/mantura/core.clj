@@ -13,6 +13,8 @@
   (fn [input]
     {:state :success :content content :remaining input}))
 
+(def return success)
+
 (defn fail
   "Return a parser that always fails"
   [& rest]
