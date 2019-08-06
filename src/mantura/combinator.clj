@@ -1,6 +1,15 @@
 (ns mantura.combinator
   (:require [mantura.core :as mantura]))
 
+(defn predicate
+  "Apply a parser, return it with original input"
+  [parser]
+  (fn [input]
+    (let [{state :state content :content :as parsed} (parser input)]
+      (if (= state :failure)
+        parsed
+        {:state state :content content :remaining input}))))
+
 (defn choice
   "Return the first succeeding parser in the list or fails"
   ([]
