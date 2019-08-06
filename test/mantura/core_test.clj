@@ -1,7 +1,8 @@
 (ns mantura.core-test
   (:require [clojure.test :refer :all]
             [mantura.core :refer :all]
-            [mantura.parser :refer :all]))
+            [mantura.parser :refer :all]
+            [mantura.combinator :refer :all]))
 
 (deftest test-success
   (testing "success"
@@ -28,16 +29,16 @@
             (run "anything")
             fail?))))
 
-(deftest test-map
-  (testing "map"
+(deftest test-lift
+  (testing "lift"
     (is (-> 0
             fail
-            (map #(%))
+            ((fn [p] (lift #(+ 2 %) p)))
             (run "anything")
             fail?))
     (is (-> 0
             success
-            (map #(+ 2 %))
+            ((fn [p] (lift #(+ 2 %) p)))
             (run "anything")
             (= (run (success 2) "anything"))))))
 
