@@ -53,17 +53,22 @@
   ([parser & fs]
    (reduce -bind parser fs)))
 
-(defn ^:private -map
-  [parser f]
-  (bind parser #(-> % f success)))
+(defn lift
+  [f p]
+  (fn [input]
+    (with-parser p input {content :content remaining :remaining}
+        {:state :success
+         :content (f content)
+         :remaining remaining})))
 
-(defn map
-  "Map a function, simply apply a function on the content of a succeeding parser
-  Otherwise do nothing"
-  ([]
-   (fn [_] {:state :failure}))
-  ([parser & fs]
-   (reduce -map parser fs)))
+(defn lift2
+  [f p q]
+  (fn [input]
+    (with-parser p input {content :content remaining :remaining}
+      (with-parser q remaining {content' :content remaining :remaining}
+        {:state :success
+         :content (f content content')
+         :remaining remaining}))))
 
 (defn fix
   [f]
