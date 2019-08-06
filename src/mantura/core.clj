@@ -69,9 +69,15 @@
   "Return the first char in the input, doesn't advance the stream
   Used for lookaheads"
   [input]
-  (if (empty?)
+  (if (empty? input)
     {:state :failure}
     {:state :success :content (first input) :remaining input}))
+
+(defn anything
+  [input]
+  (if (empty? input)
+    {:state :failure}
+    {:state :success :content (first input) :remaining (rest input)}))
 
 (defn choice
   "Return the first succeeding parser in the list or fails"
