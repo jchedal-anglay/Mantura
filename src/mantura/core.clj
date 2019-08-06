@@ -72,9 +72,8 @@
 
 (defn fix
   [f]
-  (declare --p)
   (declare --r)
-  (defn p [input] ((f --r) input))
-  (defn --r [input]
-    (p input))
+  (defn ^:private --p [input] ((f --r) input))
+  (defn ^:private --r [input]
+    (--p input))
   --r)
