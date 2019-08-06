@@ -1,4 +1,4 @@
-(ns mantura.parsers
+(ns mantura.parser
   (:require [mantura.core :as mantura]))
 
 (defn peek

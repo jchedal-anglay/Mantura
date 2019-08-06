@@ -1,7 +1,7 @@
 (ns mantura.core-test
   (:require [clojure.test :refer :all]
             [mantura.core :refer :all]
-            [mantura.parsers :refer :all]))
+            [mantura.parser :refer :all]))
 
 (deftest test-success
   (testing "success"
