@@ -65,6 +65,14 @@
   ([parser & fs]
    (reduce -lift parser fs)))
 
+(defn peek
+  "Return the first char in the input, doesn't advance the stream
+  Used for lookaheads"
+  [input]
+  (if (empty?)
+    {:state :failure}
+    {:state :success :content (first input) :remaining input}))
+
 (defn choice
   "Return the first succeeding parser in the list or fails"
   ([]
