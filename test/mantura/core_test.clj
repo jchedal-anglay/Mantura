@@ -109,3 +109,25 @@
             (run "bbbaa")
             (= {:state :failure})))))
 
+(deftest test-take
+  (testing "take"
+    (is (-> 0
+            take
+            (run "")
+            (= {:state :success :content () :remaining ()})))
+    (is (-> 0
+            take
+            (run "foo")
+            (= {:state :success :content () :remaining (seq "foo")})))
+    (is (-> 3
+            take
+            (run "foobar")
+            (= {:state :success :content (seq "foo") :remaining (seq "bar")})))
+    (is (-> 1
+            take
+            (run "")
+            fail?))
+    (is (-> 10
+            take
+            (run "abc")
+            fail?))))

@@ -115,6 +115,10 @@
          :content (map :content seq)
          :remaining (if (not-empty seq) (-> seq last :remaining) input)}))))
 
+(defn take
+  [n]
+  (apply sequence (clojure.core/take n (cycle [anything]))))
+
 (defn tokens
   "Return a parser that checks if the input starts with all the parameters"
   [toks]
