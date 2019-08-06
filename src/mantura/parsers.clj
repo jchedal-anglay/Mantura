@@ -1,5 +1,5 @@
 (ns mantura.parsers
-  (:require [mantura.core :as mt]))
+  (:require [mantura.core :as mantura]))
 
 (defn peek
   "Return the first char in the input, doesn't advance the stream
