@@ -10,6 +10,7 @@
     {:state :success :content (first input) :remaining input}))
 
 (defn anything
+  "Return the first char in the input, consumes the stream"
   [input]
   (if (empty? input)
     {:state :failure}
