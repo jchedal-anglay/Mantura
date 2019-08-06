@@ -67,12 +67,6 @@
   [toks]
   (apply sequence (map token (seq toks))))
 
-(defn ^:private -many [parser input]
-  (let [{remaining :remaining :as parsed} (parser input)]
-    (if (fail? parsed)
-      ()
-      (cons parsed (-many parser remaining)))))
-
 (defn many
   "Apply a parser until it fails"
   [parser]
@@ -82,4 +76,3 @@
   "Apply a parser until it fails"
   [parser]
   (fix (fn [self] (lift2 cons parser (choice self (success ()))))))
-
