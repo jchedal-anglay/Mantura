@@ -42,7 +42,7 @@
   [parser]
   (mantura/fix (fn [self] (mantura/lift2 cons parser (choice self (mantura/success ()))))))
 
-(defn n-times
+(defn times
   "Run a parser n times"
   [n parser]
   (apply sequence (take n (cycle [parser]))))
