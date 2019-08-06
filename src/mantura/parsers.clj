@@ -52,10 +52,12 @@
          :remaining (if (not-empty seq) (-> seq last :remaining) input)}))))
 
 (defn n-times
+  "Run a parser n times"
   [n parser]
   (apply sequence (clojure.core/take n (cycle [parser]))))
 
 (defn take
+  "Take exactly n elements of input"
   [n]
   (n-times n anything))
 
