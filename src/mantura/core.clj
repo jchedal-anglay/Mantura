@@ -120,3 +120,14 @@
       {:state :success
        :content (map :content seq)
        :remaining (if (not-empty seq) (-> seq last :remaining) input)})))
+
+(defn many1
+  "Apply a parser until it fails, return a failure if there is no match"
+  [parser]
+  (fn [input]
+    (let [seq (-many parser input)]
+      (if (empty? seq)
+        {:state :failure}
+        {:state :success
+         :content (map :content seq)
+         :remaining (if (not-empty seq) (-> seq last :remaining) input)}))))

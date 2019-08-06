@@ -85,3 +85,27 @@
             many
             (run "bbbaa")
             (= {:state :success :content () :remaining (seq "bbbaa")})))))
+
+(deftest test-many1
+  (testing "many1"
+    (is (-> \a
+            token
+            many1
+            (run "aaaaab")
+            (= {:state :success :content (seq "aaaaa") :remaining '(\b)})))
+    (is (-> \a
+            token
+            many1
+            (run "a")
+            (= {:state :success :content (seq "a") :remaining ()})))
+    (is (-> \a
+            token
+            many1
+            (run "")
+            (= {:state :failure})))
+    (is (-> \a
+            token
+            many1
+            (run "bbbaa")
+            (= {:state :failure})))))
+
