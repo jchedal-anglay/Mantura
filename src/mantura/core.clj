@@ -64,3 +64,12 @@
    (fn [_] {:state :failure}))
   ([parser & fs]
    (reduce -map parser fs)))
+
+(defn fix
+  [f]
+  (declare --p)
+  (declare --r)
+  (defn p [input] ((f --r) input))
+  (defn --r [input]
+    (p input))
+  --r)
