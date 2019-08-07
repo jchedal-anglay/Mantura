@@ -133,3 +133,66 @@
             take
             (run "abc")
             fail?))))
+
+(deftest test-take-while
+  (testing "take-while"
+    (is (->
+         (run (take-while #(= \0 %)) "0000b")
+         (= {:state :success :content (seq "0000") :remaining (seq "b")})))
+    (is (->
+         (run (take-while #(= \0 %)) "a0000b")
+         (= {:state :success :content () :remaining (seq "a0000b")})
+         ))))
+
+(deftest test-take-until
+  (testing "take-until"
+    (is (->
+         (run (take-until #(not= \0 %)) "0000b")
+         (= {:state :success :content (seq "0000") :remaining (seq "b")})))
+    (is (->
+         (run (take-until #(not= \0 %)) "a0000b")
+         (= {:state :success :content () :remaining (seq "a0000b")})
+         ))))
+
+(deftest test-skip
+  (testing "skip"
+    (is (-> 0
+            skip
+            (run "")
+            (= {:state :success :content nil :remaining ()})))
+    (is (-> 0
+            skip
+            (run "foo")
+            (= {:state :success :content nil :remaining (seq "foo")})))
+    (is (-> 3
+            skip
+            (run "foobar")
+            (= {:state :success :content nil :remaining (seq "bar")})))
+    (is (-> 1
+            skip
+            (run "")
+            fail?))
+    (is (-> 10
+            skip
+            (run "abc")
+            fail?))))
+
+(deftest test-skip-while
+  (testing "skip-while"
+    (is (->
+         (run (skip-while #(= \0 %)) "0000b")
+         (= {:state :success :content nil :remaining (seq "b")})))
+    (is (->
+         (run (skip-while #(= \0 %)) "a0000b")
+         (= {:state :success :content nil :remaining (seq "a0000b")})
+         ))))
+
+(deftest test-skip-until
+  (testing "skip-until"
+    (is (->
+         (run (skip-until #(not= \0 %)) "0000b")
+         (= {:state :success :content nil :remaining (seq "b")})))
+    (is (->
+         (run (skip-until #(not= \0 %)) "a0000b")
+         (= {:state :success :content nil :remaining (seq "a0000b")})
+         ))))

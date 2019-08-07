@@ -34,3 +34,26 @@
   "Take exactly n elements of input"
   [n]
   (mantura.combinator/times n anything))
+
+(defn take-while
+  "Take elements while predicate returns true"
+  [predicate]
+  (mantura.combinator/many (mantura/bind anything #(if (predicate %) (mantura/return %) (mantura/fail)))))
+
+(defn take-until
+  "Take elements until predicate return true"
+  [predicate]
+  (take-while #(-> % predicate not)))
+
+(defn skip
+  "Take exactly n elements of input"
+  [n]
+  (mantura/lift (fn [& _] nil) (mantura.combinator/times n anything)))
+
+(defn skip-while
+  [predicate]
+  (mantura/lift (fn [& _] nil) (take-while predicate)))
+
+(defn skip-until
+  [predicate]
+  (mantura/lift (fn [& _] nil) (take-until predicate)))
