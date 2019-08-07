@@ -88,26 +88,26 @@
             (run "bbbaa")
             (= {:state :success :content () :remaining (seq "bbbaa")})))))
 
-(deftest test-many1
-  (testing "many1"
+(deftest test-some
+  (testing "some"
     (is (-> \a
             token
-            many1
+            some
             (run "aaaaab")
             (= {:state :success :content (seq "aaaaa") :remaining '(\b)})))
     (is (-> \a
             token
-            many1
+            some
             (run "a")
             (= {:state :success :content (seq "a") :remaining ()})))
     (is (-> \a
             token
-            many1
+            some
             (run "")
             fail?))
     (is (-> \a
             token
-            many1
+            some
             (run "bbbaa")
             fail?))))
 

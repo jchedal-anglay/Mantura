@@ -46,7 +46,7 @@
                (mantura/lift2 cons parser (choice self (mantura/success ())))
                (mantura/success ())))))
 
-(defn many1
+(defn some
   "Apply a parser until it fails, fails if there is 0 elements"
   [parser]
   (mantura/fix (fn [self] (mantura/lift2 cons parser (choice self (mantura/success ()))))))
