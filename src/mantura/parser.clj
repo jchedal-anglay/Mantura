@@ -33,4 +33,4 @@
 (defn take
   "Take exactly n elements of input"
   [n]
-  (mantura.combinator/n-times n anything))
+  (mantura.combinator/times n anything))
