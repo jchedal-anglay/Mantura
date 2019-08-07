@@ -8,7 +8,7 @@
     (let [{state :state content :content :as parsed} (parser input)]
       (if (= state :failure)
         parsed
-        {:state state :content content :remaining input}))))
+        {:state state :content nil :remaining input}))))
 
 (defn choice
   "Return the first succeeding parser in the list or fails"
