@@ -43,13 +43,13 @@
   [parser]
   (mantura/fix
    (fn [self] (choice
-               (mantura/lift2 cons parser (choice self (mantura/success ())))
+               (mantura/lift cons parser (choice self (mantura/success ())))
                (mantura/success ())))))
 
 (defn some
   "Apply a parser until it fails, fails if there is 0 elements"
   [parser]
-  (mantura/lift2 cons parser (many parser)))
+  (mantura/lift cons parser (many parser)))
 
 (defn times
   "Run a parser n times"

@@ -55,22 +55,19 @@
   ([parser & fs]
    (reduce -bind parser fs)))
 
-(defn lift
-  [f p]
-  (fn [input]
-    (with-parser p input {content :content remaining :remaining}
-        {:state :success
-         :content (f content)
-         :remaining remaining})))
+(defn ^:private -lift
+  ([f acc]
+   (if (fail? acc)
+     acc
+     (update acc :content #(apply f %))))
+  ([f acc [parser & rest]]
+   (with-parser parser (:remaining acc) {content :content remaining :remaining}
+     (apply -lift f (update (assoc acc :remaining remaining) :content #(concat % [content])) rest))))
 
-(defn lift2
-  [f p q]
+(defn lift
+  [f & parsers]
   (fn [input]
-    (with-parser p input {content :content remaining :remaining}
-      (with-parser q remaining {content' :content remaining :remaining}
-        {:state :success
-         :content (f content content')
-         :remaining remaining}))))
+    (-lift f {:state :success :content () :remaining input} parsers)))
 
 (defn fix
   [f]
