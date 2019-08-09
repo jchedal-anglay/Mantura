@@ -56,9 +56,6 @@
    (reduce -bind parser fs)))
 
 (defn ^:private -lift
-  "Applicative lift, apply a function on the content of a succeeding parser
-  Use that as the content of a newly created parser
-  Otherwise do nothing"
   ([f acc]
    (if (fail? acc)
      acc
@@ -68,6 +65,9 @@
      (apply -lift f (update (assoc acc :remaining remaining) :content #(concat % [content])) rest))))
 
 (defn lift
+  "Applicative lift, apply a function on the content of a succeeding parser
+  Use that as the content of a newly created parser
+  Otherwise do nothing"
   [f & parsers]
   (fn [input]
     (-lift f {:state :success :content () :remaining input} parsers)))
