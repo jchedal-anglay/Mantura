@@ -55,3 +55,8 @@
   "Run a parser n times"
   [n parser]
   (apply sequence (take n (cycle [parser]))))
+
+(defn between
+  "Take 2 or 3 parsers and return the value of the second one if it is surrounded by the others"
+  ([surrounding p] (between surrounding p surrounding))
+  ([left p right] (mantura/lift #(nth % 1) (sequence left p right))))
