@@ -32,7 +32,7 @@
   [& parsers]
   (fn [input]
     (let [seq (-sequence parsers input)]
-      (if (some mantura/fail? seq)
+      (if (clojure.core/some mantura/fail? seq)
         {:state :failure}
         {:state :success
          :content (map :content seq)
