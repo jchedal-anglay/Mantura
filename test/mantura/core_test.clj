@@ -34,3 +34,13 @@
     (let [success-result (core/run (core/success content) input)
           fail-result (core/run (core/fail content) input)]
       (and (core/success? success-result) (not (core/success? fail-result))))))
+
+(defspec test-fail?
+  20
+  (prop/for-all
+   [content gen/any
+    input (gen/list gen/any)]
+    (let [success-result (core/run (core/success content) input)
+          fail-result (core/run (core/fail content) input)]
+      (and (core/fail? fail-result) (not (core/fail? success-result))))))
+
