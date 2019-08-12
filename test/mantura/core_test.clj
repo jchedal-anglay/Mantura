@@ -44,3 +44,12 @@
           fail-result (core/run (core/fail content) input)]
       (and (core/fail? fail-result) (not (core/fail? success-result))))))
 
+(defspec test-bind
+  20
+  (prop/for-all
+   [content gen/int
+    input (gen/list gen/any)]
+    (let [success-result (core/run (core/bind (core/success content) #(core/success (* 2 %))) input)
+          fail-result (core/run (core/bind (core/fail content) #(core/success (* 2 %))) input)]
+      (and (= success-result {:state :success :content (* 2 content) :remaining input})
+           (core/fail? fail-result)))))
