@@ -25,3 +25,12 @@
    [content gen/any
     input (gen/list gen/any)]
    (= (core/run (core/fail content) input) {:state :failure})))
+
+(defspec test-success?
+  20
+  (prop/for-all
+   [content gen/any
+    input (gen/list gen/any)]
+    (let [success-result (core/run (core/success content) input)
+          fail-result (core/run (core/fail content) input)]
+      (and (core/success? success-result) (not (core/success? fail-result))))))
