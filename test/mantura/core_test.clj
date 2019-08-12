@@ -50,6 +50,18 @@
    [content gen/int
     input (gen/list gen/any)]
     (let [success-result (core/run (core/bind (core/success content) #(core/success (* 2 %))) input)
-          fail-result (core/run (core/bind (core/fail content) #(core/success (* 2 %))) input)]
+          fail-result (core/run (core/bind (core/fail content) #(core/success (* 2 %))) input)
+          fail-result' (core/run (core/bind (core/success content) #(core/fail (* 2 %))) input)]
+      (and (= success-result {:state :success :content (* 2 content) :remaining input})
+           (core/fail? fail-result)
+           (core/fail? fail-result')))))
+
+(defspec test-lift
+  20
+  (prop/for-all
+   [content gen/int
+    input (gen/list gen/any)]
+    (let [success-result (core/run (core/lift #(* 2 %) (core/success content)) input)
+          fail-result (core/run (core/lift #(* 2 %) (core/fail content)) input)]
       (and (= success-result {:state :success :content (* 2 content) :remaining input})
            (core/fail? fail-result)))))
