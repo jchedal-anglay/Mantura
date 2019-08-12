@@ -22,3 +22,13 @@
       (if (empty? input)
         {:state :failure}
         {:state :success :content (first input) :remaining (rest input)}))))
+
+(defspec test-token
+  20
+  (prop/for-all
+   [input (gen/list (gen/elements [0 1 2 3 4]))
+    tok (gen/elements [0 1 2 3 4])]
+   (= (core/run (parser/token tok) input)
+      (if (and (not-empty input) (= (first input) tok))
+        {:state :success :content tok :remaining (rest input)}
+        {:state :failure}))))
