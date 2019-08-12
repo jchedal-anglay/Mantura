@@ -12,4 +12,13 @@
    (= (core/run parser/peek input)
       (if (empty? input)
         {:state :failure}
-        {:state :success :content (first input) :remaining (seq input)}))))
+        {:state :success :content (first input) :remaining input}))))
+
+(defspec test-anything
+  20
+  (prop/for-all
+   [input (gen/list gen/any)]
+   (= (core/run parser/anything input)
+      (if (empty? input)
+        {:state :failure}
+        {:state :success :content (first input) :remaining (rest input)}))))
