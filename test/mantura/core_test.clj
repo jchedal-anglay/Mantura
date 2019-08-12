@@ -18,3 +18,10 @@
    [content gen/any
     input (gen/list gen/any)]
    (= (core/run (core/return content) input) {:state :success :content content :remaining input})))
+
+(defspec test-fail
+  20
+  (prop/for-all
+   [content gen/any
+    input (gen/list gen/any)]
+   (= (core/run (core/fail content) input) {:state :failure})))
