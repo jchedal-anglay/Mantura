@@ -60,7 +60,7 @@
    (if (fail? acc)
      acc
      (update acc :content #(apply f %))))
-  ([f acc [parser & rest]]
+  ([f acc parser & rest]
    (with-parser parser (:remaining acc) {content :content remaining :remaining}
      (apply -lift f (update (assoc acc :remaining remaining) :content #(concat % [content])) rest))))
 
@@ -70,12 +70,11 @@
   Otherwise do nothing"
   [f & parsers]
   (fn [input]
-    (-lift f {:state :success :content () :remaining input} parsers)))
+    (apply -lift f {:state :success :content () :remaining input} parsers)))
 
 (defn fix
   [f]
-  (declare --r)
-  (defn ^:private --p [input] ((f --r) input))
-  (defn ^:private --r [input]
-    (--p input))
-  --r)
+  (letfn [(--p [input] ((f --r) input))
+          (--r [input]
+            (--p input))]
+    --r))
