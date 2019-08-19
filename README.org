@@ -1,1 +1,42 @@
-WIP
+#+TITLE: Mantura, a parser combinator clojure library
+
+* Basic Usage
+
+Keep in mind, this project is not suitable for a production environment. It is also a work in progress and is most likely to change over time.
+
+#+BEGIN_SRC clojure
+  (require '[mantura.core :as mantura]
+           '[mantura.parser]
+           '[mantura.combinator])
+
+  ;; Let's define our parsers
+  (def parse-tom (mantura.parser/tokens "tom"))
+  (def parse-john (mantura.parser/tokens "john"))
+  (def parse-tom-or-john (mantura.combinator/choice parse-tom parse-john))
+
+  ;; Apply the parser to our input
+  (run parse-tom-or-john "tom") ;;=> {:state :success, :content (\t \o \m), :remaining ()}
+  (run parse-tom-or-john "john") ;;=> {:state :success, :content (\j \o \h \n), :remaining ()}
+  (run parse-tom-or-john "steve") ;;=> {:state :failure}
+#+END_SRC
+
+* Explainations
+
+[[https://en.wikipedia.org/wiki/Parser_combinator][Parser combinators]] are functions taking and returning parsers, in ML syntax, they have the type `Parser -> Parser`.
+A parser is defined as a function taking a sequence as input, and returning either a valid output containing some value and the partially consumed input or an invalid output.
+In this case, the return value of a parser is a map containing 3 fields:
+- status: :success | :failure
+- content: any value, this is what your parsers generate from the input
+- remaining: list, the rest of your input, possibly empty
+
+* Library structure
+
+There are (for now) 3 main files:
+- [[https://github.com/Lgneous/Mantura/blob/master/src/mantura/core.clj][core.clj]] contains the most common functions and operations to define and run parsers
+- [[https://github.com/Lgneous/Mantura/blob/master/src/mantura/parser.clj][parser.clj]] contains usual parsers defined for convenience
+- [[https://github.com/Lgneous/Mantura/blob/master/src/mantura/combinator.clj][combinator.clj]] contains usual parser combinators used to operate on parsers
+
+* Inspirations
+
+The design is shamelessly stolen from [[https://github.com/inhabitedtype/angstrom][Angstrom]], an ocaml library.
+  
