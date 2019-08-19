@@ -25,7 +25,7 @@ Keep in mind, this project is not suitable for a production environment. It is a
 [[https://en.wikipedia.org/wiki/Parser_combinator][Parser combinators]] are functions taking and returning parsers, in ML syntax, they have the type `Parser -> Parser`.
 A parser is defined as a function taking a sequence as input, and returning either a valid output containing some value and the partially consumed input or an invalid output.
 In this case, the return value of a parser is a map containing 3 fields:
-- status: :success | :failure
+- state: :success | :failure
 - content: any value, this is what your parsers generate from the input
 - remaining: list, the rest of your input, possibly empty
 
