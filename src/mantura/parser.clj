@@ -46,14 +46,16 @@
   (take-while #(-> % predicate not)))
 
 (defn skip
-  "Take exactly n elements of input"
+  "Skip exactly n elements of input"
   [n]
   (mantura/lift (fn [& _] nil) (mantura.combinator/times n anything)))
 
 (defn skip-while
+  "Skip elements while predicate returns true"
   [predicate]
   (mantura/lift (fn [& _] nil) (take-while predicate)))
 
 (defn skip-until
+  "Skip elements until predicate returns true"
   [predicate]
   (mantura/lift (fn [& _] nil) (take-until predicate)))
